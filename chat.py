@@ -32,6 +32,7 @@ class ChatGPT:
         self.messages = messages
         self.user = user
         self.system = None
+        self.api = None
         self.system_mode = system_mode
         self.bot_status = BotStatus()
         
@@ -83,10 +84,12 @@ class ChatGPT:
     def ask(self, text) -> Result:
         if self.system is None:
             return Error("还没有设置人设")
+        elif self.api is None:
+            return Error("还没有设置API")
         d = {"role": "user", "content": text}
         self.messages.append(d)
-        print("问了ChatGPT")
-        text = askChatGPT([self.system,]+self.messages)
+        
+        text = askChatGPT([self.system,]+self.messages,self.api)
         if not text:
             self.messages.pop()
             return Error("ChatGPT出错了")

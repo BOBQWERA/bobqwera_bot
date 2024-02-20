@@ -6,11 +6,11 @@ def get_token():
         return file.read().strip()
     
 
-def askChatGPT(messages):
+def askChatGPT(messages,api):
     url = "https://openkey.cloud/v1/chat/completions"
     headers = {
     'Content-Type': 'application/json',
-    'Authorization': 'Bearer sk-iFZCqiwRbz48hpRbbSpOZT7HY8nlviK50Cbd6yosfiO6A2GA'
+    'Authorization': f'Bearer {api}'
     }
 
     data = {

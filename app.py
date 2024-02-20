@@ -21,12 +21,14 @@ commands = [
     BotCommand("clear", "清空对话记录"),
     BotCommand("system", "设置人设"),
     BotCommand("back", "撤回"),
+    BotCommand("api", "设置API"),
 ]
 """
 start - 开始
 clear - 清空对话记录
 system - 设置人设
 back - 撤回
+api - 设置API
 """
 
 chat_pool = {}
@@ -57,6 +59,10 @@ def handle_bot_status(message,gpt):
         gpt.set_system(message)
         gpt.bot_status.set_status('chatting')
         return '你好呀'
+    elif gpt.bot_status.is_api:
+        gpt.api = message
+        gpt.bot_status.set_status('chatting')
+        return '已设置API'
     message,ok = gpt.ask(message).parse()
     return message
 
@@ -74,6 +80,11 @@ async def system(update, context):
     gpt = get_user_meta(update)['gpt']
     gpt.bot_status.set_status('system')
     await context.bot.send_message(chat_id=update.effective_chat.id, text="请输入人设")
+
+async def api(update, context):
+    gpt = get_user_meta(update)['gpt']
+    gpt.bot_status.set_status('api')
+    await context.bot.send_message(chat_id=update.effective_chat.id, text="请输入API")
 
 async def back(update, context):
     gpt = get_user_meta(update)['gpt']
@@ -105,6 +116,7 @@ if __name__ == '__main__':
     clear_handler = CommandHandler('clear', clear)
     system_handler = CommandHandler('system', system)
     back_handler = CommandHandler('back', back)
+    api_handler = CommandHandler('api', api)
     chat_handler = MessageHandler(filters.TEXT & (~filters.COMMAND), chat)
     unknown_handler = MessageHandler(filters.COMMAND, unknown)
 
@@ -112,6 +124,7 @@ if __name__ == '__main__':
     application.add_handler(clear_handler)
     application.add_handler(system_handler)
     application.add_handler(back_handler)
+    application.add_handler(api_handler)
     application.add_handler(chat_handler)
     application.add_handler(unknown_handler)
 
